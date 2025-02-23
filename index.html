@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Lyrics Sync</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #121212;
+            color: white;
+        }
+        .lyrics {
+            margin-top: 20px;
+            font-size: 24px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dedicado a garota que destruiu meus sentimentos...<br> 
+        <span style="font-size: 16px;">Em forma de agradecimento aos seus vacilos, te dedico essas 3 músicas</span>
+    </h1>
+    
+    <h2>Hoje Sou Eu Que Não Mais Te Quero - Charlie Brown Jr.</h2>
+    <audio id="audio1" controls>
+        <source src="CharlieBrown.mpeg" type="audio/mpeg">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+    <div id="lyrics1" class="lyrics"></div>
+    
+    <h2>Girassol (Acustico) - IVYSON</h2>
+    <audio id="audio2" controls>
+        <source src="Girassol_IVYSON.mpeg" type="audio/mpeg">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+    <div id="lyrics2" class="lyrics"></div>
+    
+    <h2>Someday i'll get it - Alex Olsen</h2>
+    <audio id="audio3" controls>
+        <source src="someday.mpeg" type="audio/mpeg">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+    <div id="lyrics3" class="lyrics"></div>
+    
+    <script>
+        const lyricsData = [
+            { 
+                id: "audio1", 
+                lyricsId: "lyrics1", 
+                lyricsText: `[00:05.00]...\n[00:40.00]A gente passa o dia junto\n[00:42.00]A gente fala sobre tudo
+                \n[00:43.00]Mas eu sinto você tão longe\n[00:46.00]Você diz sempre que me ama, mas não age como tal
+                \n[00:49.00]Será que amar demais, às vezes faz tão mal?\n[00:51.00]Eu me pergunto por que as coisas são assim
+                \n[00:54.00]Todo dia eu recomeço muito perto do fim\n[00:57.00]Mas o fato é que fomos, somos e seremos sempre muito fortes
+                \n[01:02.00]A gente corre o tempo todo atrás de um tal de ideal\n[01:05.00]Baseado num formato que talvez não seja o ideal
+                \n[01:09.00]Nem pra você, nem pra mim, nem pra você, nem pra mim\n[01:13.00]Eu olho pra você, eu vejo muito do que eu quero
+                \n[01:15.00]Mas o mesmo de você, sinceramente, eu já nem mais espero\n[01:19.00]Já nem sei mais se eu quero, nem sei se quero
+                \n[01:23.00]Você era o meu céu, era meu chão, era meu mundo\n[01:27.00]O nosso sonho era rodarmos juntos o mundo
+                \n[01:30.00]Mas nós nos perdemos pelo mundo\n[01:33.00]Dia após dia, cada um no seu mundo\n[01:36.00]Cada um no seu mundo
+                \n[01:39.00]Mundo esse que era o nosso mundo\n[01:43.00]Que era o nosso mundo\n[01:45.00]Eu olho pra você, eu vejo muito do que eu quero
+                \n[01:48.20]Mas o mesmo de você, sinceramente, eu já nem mais espero\n[01:52.00]Já nem sei mais se eu quero, nem sei se quero
+                \n[01:57.00]Hoje sou eu que não mais te quero\n[02:02.00]Hoje sou eu que não mais te espero\n[02:08.00]Hoje sou eu que não mais te quero
+                \n[02:13.00]Hoje sou eu que não mais te espero\n[02:22.00]...`
+            },
+            { 
+                id: "audio2", 
+                lyricsId: "lyrics2", 
+                lyricsText: `[00:00.20]Quando a saudade apertar...\n[00:04.00]lembra que a gente ja foi amor
+                \n[00:08.40]exagerado, mas era amor\n[00:11.50]transas no carro pra saciar o vício, eu desisto de te procurar...
+                \n[00:19.50]em cada esquina em que passei\n[00:22.50]te deixei rimas que nunca cantei pra ti
+                \n[00:28.50]girassol, veja o Sol\n[00:31.50]dava pra sentir por todo o corpo...
+                \n[00:34.50]era amor\n[00:38.00]tornou dor
+                \n[00:40.40]o tempo curou\n[00:47.00]...
+                `
+            },
+            { 
+                id: "audio3", 
+                lyricsId: "lyrics3", 
+                lyricsText: `[00:01.00]...` 
+            }
+        ];
+        
+        lyricsData.forEach(song => {
+            const audio = document.getElementById(song.id);
+            const lyricsDiv = document.getElementById(song.lyricsId);
+            const lyricsArray = song.lyricsText.split("\n").map(line => {
+                const match = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+                return match ? { time: parseInt(match[1]) * 60 + parseFloat(match[2]), text: match[3] } : null;
+            }).filter(Boolean);
+            
+            function updateLyrics() {
+                const currentTime = audio.currentTime;
+                const currentLyric = lyricsArray.find((lyric, index) => 
+                    currentTime >= lyric.time && (index === lyricsArray.length - 1 || currentTime < lyricsArray[index + 1].time));
+                
+                lyricsDiv.textContent = currentLyric ? currentLyric.text : "";
+            }
+            
+            audio.addEventListener("timeupdate", updateLyrics);
+        });
+    </script>
+</body>
+</html>
